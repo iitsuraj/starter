@@ -11,9 +11,7 @@ var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
 var secret = require('./config/secret');
 var passportConf = require('./config/passport');
-var Club = require("./models/club");
 var csurf = require('csurf');
-require('./models/subscribers_model');
 var compression = require('compression')
 var subdomain = require('express-subdomain');
 var helmet = require('helmet')
@@ -64,44 +62,19 @@ app.use(function(req, res, next) {
     res.locals.user = req.user;
     next();
 });
-app.use(function(req, res, next) {
-    Club.find({}, function(err, clubs) {
-        if (err) return next(err);
-        res.locals.clubs = clubs;
-        next();
-    });
-});
 app.engine('ejs', engine);
 
 app.set('view engine', 'ejs');
-app.set('view cache', true);
+// app.set('view cache', true);
 
 // app.use(csrfMiddleware);
 
 // routes
 
-var dashboard = require("./routes/panel");
-var account = require("./routes/account")
-app.use('/dashboard', passportConf.isAdmin, dashboard)
-app.use(account)
-var ca = require("./routes/ca");
-// app.use('/ca', ca)
-app.use(subdomain('ca', ca))
-var main = require("./routes/main")
-app.use(main)
-
-var push = require('./routes/push');
-app.use("/push", push)
-var subscribe = require('./routes/subscribe');
-app.use("/subscribe", subscribe)
-
-// var analytics = require("./routes/analytics")
-// app.use('/analytics',passportConf.isAdmin, analytics)
-// app.get('/test', function(req,res,next){
-//   res.render("test")
-// })
-
-app.listen(process.env.PORT || secret.port, function(err) {
+app.get("/", function(req, res, next) {
+    res.render("index")
+})
+app.listen(process.env.PORT || 4000, function(err) {
     if (err) throw err;
-    console.log("server is running on port " + secret.port);
+    console.log("server is running on port " + 4000);
 });
